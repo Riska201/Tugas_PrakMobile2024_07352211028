@@ -1,0 +1,142 @@
+class ProdukDigital {
+  String namaProduk;
+  double harga;
+  String kategori;
+
+  ProdukDigital(this.namaProduk, this.harga, this.kategori);
+
+  void terapkanDiskon(double persenDiskon) {
+    if (kategori == 'NetworkAutomation' && persenDiskon <= 100 && persenDiskon >= 0) {
+      harga -= harga * (persenDiskon / 100);
+      print("Diskon sebesar $persenDiskon% telah diterapkan. Harga baru: Rp$harga.");
+    } else {
+      print("Diskon tidak valid.");
+    }
+  }
+}
+
+// Kelas Abstrak Karyawan
+abstract class Karyawan {
+  String nama;
+  int umur;
+
+  Karyawan(this.nama, this.umur);
+
+  void bekerja(); // Metode abstrak
+}
+
+// Subclass KaryawanTetap
+class KaryawanTetap extends Karyawan {
+  KaryawanTetap(String nama, int umur) : super(nama, umur);
+
+  @override
+  void bekerja() {
+    print('$nama (Tetap) sedang bekerja.');
+  }
+}
+
+// Subclass KaryawanKontrak
+class KaryawanKontrak extends Karyawan {
+  KaryawanKontrak(String nama, int umur) : super(nama, umur);
+
+  @override
+  void bekerja() {
+    print('$nama (Kontrak) sedang bekerja.');
+  }
+}
+
+// Mixin Kinerja untuk Produktivitas
+mixin Kinerja {
+  int produktivitas = 0;
+
+  void tingkatkanProduktivitas() {
+    produktivitas += 10;
+  }
+
+  bool cekProduktivitasManager() {
+    return produktivitas > 85;
+  }
+}
+
+// Menggunakan mixin pada kelas Manager
+class Manager extends Karyawan with Kinerja {
+  Manager(String nama, int umur) : super(nama, umur);
+
+  @override
+  void bekerja() {
+    print('$nama (Manager) sedang bekerja dengan produktivitas $produktivitas.');
+  }
+}
+
+// Enum FaseProyek untuk Konsistensi Proyek
+enum FaseProyek { Perencanaan, Pengembangan, Evaluasi }
+
+class Proyek {
+  FaseProyek faseSaatIni = FaseProyek.Perencanaan;
+
+  void transisiFase(FaseProyek faseBaru) {
+    if (faseBaru.index == faseSaatIni.index + 1) {
+      faseSaatIni = faseBaru;
+      print('Transisi ke fase $faseBaru berhasil.');
+    } else {
+      print('Transisi ke fase $faseBaru tidak valid dari fase $faseSaatIni.');
+    }
+  }
+}
+
+// Kelas Perusahaan untuk Pembatasan Jumlah Karyawan Aktif
+class Perusahaan {
+  List<Karyawan> karyawanAktif = [];
+  List<Karyawan> karyawanNonAktif = [];
+  final int batasMaksimal = 20;
+
+  void tambahKaryawan(Karyawan karyawan) {
+    if (karyawanAktif.length < batasMaksimal) {
+      karyawanAktif.add(karyawan);
+      print('Karyawan ${karyawan.nama} berhasil ditambahkan.');
+    } else {
+      print('Batas maksimal karyawan aktif tercapai.');
+    }
+  }
+
+  void resignKaryawan(Karyawan karyawan) {
+    if (karyawanAktif.remove(karyawan)) {
+      karyawanNonAktif.add(karyawan);
+      print('Karyawan ${karyawan.nama} telah resign dan dipindahkan ke daftar non-aktif.');
+    } else {
+      print('Karyawan ${karyawan.nama} tidak ditemukan dalam daftar karyawan aktif.');
+    }
+  }
+}
+
+// Contoh penggunaan
+void main() {
+  // ProdukDigital
+  var produk = ProdukDigital('Automasi Jaringan', 5000000, 'NetworkAutomation');
+  produk.terapkanDiskon(10);
+  print('Harga setelah diskon: Rp${produk.harga}\n');
+
+  // Karyawan dan Manager
+  var karyawanTetap = KaryawanTetap('Aghatia', 30);
+  karyawanTetap.bekerja();
+
+  var karyawanKontrak = KaryawanKontrak('Chanda', 25);
+  karyawanKontrak.bekerja();
+
+  var manager = Manager('Chanda', 40);
+  manager.bekerja();
+  manager.tingkatkanProduktivitas();
+  print('Produktivitas Manager: ${manager.produktivitas}\n');
+
+  // FaseProyek
+  var proyek = Proyek();
+  proyek.transisiFase(FaseProyek.Pengembangan);
+  proyek.transisiFase(FaseProyek.Evaluasi);
+
+  // Perusahaan
+  var perusahaan = Perusahaan();
+  perusahaan.tambahKaryawan(karyawanTetap);
+  perusahaan.tambahKaryawan(karyawanKontrak);
+  perusahaan.tambahKaryawan(manager);
+  perusahaan.resignKaryawan(karyawanTetap);
+}
